@@ -1,0 +1,174 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("assets/css/patc.css");')
+@import url("assets/css/library.css");')
+-->
+</style>
+<body>
+
+<style type = "text/css">
+
+#del {
+#      position:absolute;
+       left: 200px;
+#       top: 50px;
+       border:1px solid;
+       width:500px; height:400px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;}
+
+
+
+
+
+#sch {
+#      position:absolute;
+       left: 200px;
+#       top: 50px;
+       border:1px solid;
+       width:500px; height:200px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;}
+
+
+#open {
+#      position:absolute;
+       left: 200px;
+#      top: 300px;
+       border:1px solid;
+       width:500px; height:90px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+#capt {
+#      position:absolute;
+       left: 200px;
+#      top: 450px;
+       border:2px solid;
+       width:500px; height:75px; 
+       background:#e8f6f9; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+
+
+</style>
+
+
+<center>
+<h2>Admin DB Page</h2>
+
+<div id=delete>
+<table style="background-color:azure" ; width:30%">
+<tr>
+  <th></th>
+  <th>Date</th>
+  <th>Day</th>
+  <th>Time</th>  
+  <th>Location</th>
+  <th>Captain</th>
+</tr>
+ <form name="del_reservation" action="del_reservation" method="GET">
+  {% for cr in CourtReservation %}
+    <tr>
+      <td>
+      <input type="checkbox" name='keys[]' value="{{cr.key}}"> 
+    </td>
+    <td>{{ cr.date }} </td>
+    <td>{{ cr.day }} </td>
+    <td>{{cr.rstart}}->{{cr.rend}}</td>
+    <td>{{cr.location}}</td>
+    <td>{{cr.fname}} {{cr.lname}}</td>
+
+    </input>
+  </tr>
+
+  {% endfor %}
+  <input type="submit" value="Delete a Reservation!">
+</form>
+</table>
+</div>
+<p>
+
+
+
+<div >
+    <table style="width:30%; background-color:rgb(152, 202, 202)">
+    <tr> <th>This Deletes all reservations</th></tr>
+      <tr>
+      <form name="del_all_reservation" action="del_all_reservation" method="GET">
+      </tr>
+
+      <tr> 
+        <td>
+          <center>
+       <input type="submit" value="Delete All Reservations">
+          </center>
+       <td>
+
+      </tr>  
+
+    </form>
+
+  </table>
+
+</div>
+<p>
+
+  Delete Captain
+  <table id=capt width="510">
+  
+  <thead>
+  <tr>
+  <th scope="col">Name</th>
+  <th scope="col">Username</th>
+  <th scope="col">Team</th>
+  <th scope="col">Password</th>
+  <th scope="col">Count</th>
+  </thead>
+  
+  <form name="captain" action="{{Site}}/doeditcapt" method="POST">
+  {% for e in Captains %}
+  <tr>
+  <td>{{e.fname}} {{e.lname}}</td>
+  <td>{{e.user}} </td>
+  <td>{{e.team}} </td>
+  <input type="hidden" name={{e.key}}[] value={{e.key}}> </td>
+  <td><input type="text" size=8 name={{e.key}}[] value={{e.password}}> </td>
+  <td><input type="text" size=3 name={{e.key}}[] value={{e.count}}></td>
+  </tr>
+  {% endfor %}
+  <tr>
+  <td align=center colspan="5"><input type="submit" value="Edit Captain"></td>
+  </tr>
+  </form>
+  </table>
+
+<p>
+ 
+
+
+
+
+
+
+
+
+</html>
+
