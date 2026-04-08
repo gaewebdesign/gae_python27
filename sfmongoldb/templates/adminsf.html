@@ -1,0 +1,133 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("/assets/css/table.css");')
+@import url("/assets/css/library.css");')
+-->
+</style>
+
+<script language="JavaScript" src="/assets/javascript/sorttable.js"></script>
+<script language="JavaScript" src="/assets/javascript/library.js"></script>
+
+<script language="JavaScript" src="assets/javascript/sorttable.js"></script>
+<script language="JavaScript" src="assets/javascript/library.js"></script>
+
+<body>
+
+<style type = "text/css">
+<!--    -->
+</style>
+
+<center>
+<h2>{{TITLE}}</h2>
+<!--
+<table cellpadding="2">
+<th>
+
+</table>
+-->
+
+<p>
+  <a style=text-decoration:none href="/{{DIR}}/{{OTOTOSHI}}">{{OTOTOSHI}}</a>
+  <a style=text-decoration:none href="/{{DIR}}/{{KYONEN}}">{{KYONEN}}</a>
+  <a style=text-decoration:none href="/{{DIR}}/{{KOTOSHI}}">{{KOTOSHI}}</a>
+
+<table>
+
+<thread>
+
+
+<th scope="col"  style="background-color:{{COLOR_TWILIGHT}}">TWILIGHT</th>
+<th scope="col"></th>
+<th scope="col" style="background-color:{{COLOR_GGTC}}">GGTC</th>
+</thread>
+</table>
+
+<form id="_MODIFY"  action="/modifysf" method="post">
+<input name="ModifyForm" type="submit" value=" MODIFY "> 
+
+
+<table align="center" class="sortable" width="80%">
+
+<thead>
+<tr>
+<th scope="col">Edit</th>
+<th scope="col">Year</th>
+<th scope="col">First Name</th>
+<th scope="col">Last Name</th>
+<th scope="col">Address</th>
+<th scope="col">City</th>
+<th scope="col">Email</th>
+<th scope="col">NTRP</th>
+<th scope="col">HELP</th>
+<th scope="col">OTHER</th>
+<th scope="col">IP</th>
+<th scope="col">Date</th>
+
+</thead>
+
+
+
+{% for e in TwilightList %}
+
+<tr style="background-color:{{COLOR_TWILIGHT}}">
+
+<td>
+
+
+<input type="radio" id="DEL" name = "MODIFY" value="{{e.unix}},TWILIGHT">
+
+</td>
+
+<td>{{e.year}}</td>
+<td>{{e.fname}}</td>
+<td>{{e.lname}} </td>
+<td>{{e.address}} </td>
+<td>{{e.city}} </td>
+<td>{{e.email}} </td>
+<td>{{e.ntrp}} </td>
+<td>{{e.help}} </td>
+<td>{{e.other}} </td>
+<td>{{e.ip}} </td>
+<td>{{e.date}} </td>
+
+</tr>
+{% endfor %}
+
+
+{% for e in MemberList %}
+
+<tr style="background-color:{{COLOR_GGTC}}">
+
+<td>
+
+
+<input type="radio" id="DEL" name = "MODIFY" value="{{e.unix}},GGTC">
+
+</td>
+
+<td>{{e.year}}</td>
+<td>{{e.fname}}</td>
+<td>{{e.lname}} </td>
+<td>{{e.address}} </td>
+<td>{{e.city}} </td>
+<td>{{e.email}} </td>
+<td>{{e.ntrp}} </td>
+<td>{{e.help}} </td>
+<td>{{e.other}} </td>
+<td>{{e.ip}}</td>
+<td>{{e.date}} </td>
+
+</tr>
+{% endfor %}
+
+
+
+</table>
+
+</form>
+
+</html>

@@ -1,0 +1,366 @@
+# app.yaml 
+
+# to clear out
+# cd
+# ls -la
+# sudo rm -r .appcfg_oauth2_tokens 
+# gae_appcfg_oauth2_tokens
+
+# http//localhost:8080
+# run these one directory higher
+# /google-cloud-sdk/platform/google_appengine/appcfg.py download_app -A sfmongoldata -V 1 j2 --oauth2
+# /google-cloud-sdk/platform/google_appengine/dev_appserver.py $1
+# /google-cloud-sdk/platform/google_appengine/dev_appserver.py --clear_datastore=1 $1
+
+# SYMBOLIC LINK
+# sudo ln -s /gae/j2/_ggtc/membership/ ggtc_
+
+# MYSQL (changing root password)
+# http://www.sentia.com.au/blog/reset-mysql-root-password-on-mac-osx
+
+# Do this in one terminal window (after shutting off mysql )
+#/usr/local/mysql/bin/mysqld_safe --skip-grant-tablesÂ 
+
+# Run this in another window to change the password
+# update user set authentication_string = PASSWORD("tomato1349") where Host="localhost" and user="root";
+
+# SEARCHING
+# grep  -rnw . -e  "includes.inc"
+
+# http://api.jquery.com/load/
+# <div id="thisdiv">
+# $('#thisdiv').load(document.URL +  ' #thisdiv');
+# Note, load automatically replaces content. Be sure to include a space before the id selector.
+
+# JQUERY TABLE SORT
+# https://ourcodeworld.com/articles/read/619/top-7-best-table-sorter-javascript-and-jquery-plugins
+# https://github.com/kylefox/jquery-tablesort/blob/master/jquery.tablesort.js
+#
+
+# CORS
+# python fix
+# https://stackoverflow.com/questions/31212992/how-to-enable-cors-on-google-app-engine-python-server
+#         self.response.headers['Access-Control-Allow-Origin']  = '*';
+# https://www.chromestatus.com/feature/5088147346030592
+#
+#
+# php fix
+# https://stackoverflow.com/questions/20035101/why-does-my-javascript-code-get-a-no-access-control-allow-origin-header-is-pr
+#  header('Access-Control-Allow-Origin: *'); 
+
+
+
+#application: scmongoldata
+# rogero.tennis 
+#application: sctcmongoldata
+
+#application: sfmongoldata
+
+#application: ggtcmongoldata
+
+#application: jeung4tennis
+
+#application: gaeapptestbed
+
+#version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+#basic_scaling:
+# max_instances: 1
+
+# https://cloud.google.com/appengine/docs/standard/python/config/appref
+
+
+builtins:
+- deferred: on
+- appstats: on
+
+# ndb query help 
+# https://cloud.google.com/appengine/docs/standard/python/ndb/queries
+
+#  ln -s source_file myfile  (symbolic link )
+
+# https://pip.pypa.io/en/stable/installing/#do-i-need-to-install-pip
+# curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+# python get-pip.py
+#  '/Library/Python/2.7/site-packages/pip'
+# Installing collected packages: pip, wheel
+
+# sudo pip install requests
+# Installing collected packages: idna, urllib3, chardet, certifi, requests
+# This is where above packages were installed
+#  ls /Library/Python/2.7/site-packages/
+
+
+# https://www.quora.com/How-can-I-install-Requests-library-for-Python-in-simple-steps
+# curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+#libraries:
+
+#- name: ssl
+#  version: latest
+
+# colourtag-page1.css
+# contentContainer	border-color: #FFFFFF;
+# #top, #pageHeader, #bottom, #footer, #top_center, #headerLine{
+
+handlers:
+
+- url: /assets
+  static_dir: assets
+
+- url: /data
+  script: tools.app
+
+- url: /memb
+  script: membership.app
+
+- url: /accept
+  script: membership.app
+
+- url: /mass
+  script: membership.app
+
+- url: /members
+  script: listsctc.app
+
+- url: /members/([\d]*)
+  script: listsctc.app
+
+- url: /queue
+  script: listsctc.app
+
+- url: /queue/([\d]*)
+  script: listsctc.app
+
+- url: /email
+  script: listsctc.app
+
+- url: /email/([\d]*)
+  script: listsctc.app
+
+- url: /plist
+  script: listsctc.app
+
+- url: /plist/([\d]*)
+  script: listsctc.app
+
+
+
+# All JSON 
+# get members
+- url: /majority
+  script: sctchandler.app
+
+# POST[YEAR]  get resident/nonresident distribution
+- url: /distribution    
+  script: sctchandler.app
+
+
+- url: /year
+  script: sctchandler.app
+
+- url: /(kotoshi)
+  script: sctchandler.app
+
+- url: /(kyonen)
+  script: sctchandler.app
+
+- url: /(otoshi)
+  script: sctchandler.app
+
+- url: /post
+  script: sctchandler.app
+
+- url: /pending
+  script: sctchandler.app
+
+
+# For dumping the database, short retrievals
+# send a single new member to SCTC
+- url: /sendsctc
+  script: dump.app
+
+
+- url: /sendLastPlayer
+  script: dump.app
+
+
+- url: /convert
+  script: dump.app
+
+- url: /dump1
+  script: dump.app
+
+- url: /dump2
+  script: dump.app
+
+- url: /fromsctc
+  script: dump.app
+
+- url: /sfdata
+  script: dump.app
+
+- url: /readsf
+  script: dump.app
+
+- url: /redirect
+  script: dump.app
+
+
+# GGTC 
+- url: /sendlast
+  script: dump.app
+
+# 2019 just last 10 
+- url: /short
+  script: dump.app
+
+# 2019 everyone
+- url: /long
+  script: dump.app
+
+
+# For Testing
+# LOAD PENDING/WAIT/MEMBER
+- url: /loadWait
+  script: sctchandler.app
+
+- url: /loadPending
+  script: sctchandler.app
+
+- url: /loadMember
+  script: sctchandler.app
+# ********************************
+
+# POST method
+- url: /transfer                 
+  script: sctchandler.app
+
+# non-POST method
+- url: /transfer/([\d]*)
+  script: sctchandler.app
+
+- url: /address
+  script: sctchandler.app
+
+- url: /admin
+  script: administrator.app
+
+- url: /admin/([\d]*)
+  script: administrator.app
+
+- url: /modify
+  script: administrator.app
+
+- url: /_action
+  script: administrator.app
+
+
+# Figure if we can add non-residents
+- url: /ajax
+  script: sctchandler.app
+
+# Add SCTC Members
+# imports from data.dataSC2018, etc
+# need to change one line in datasctc.py
+- url: /datasctc
+  script: datasctc.app
+
+- url: /purgesctc
+  script: datasctc.app
+
+- url: /test
+  script: testhandler.app
+
+# CLUB DAY
+
+- url: /enter
+  script: clubday.app
+
+- url: /clubday
+  script: clubday.app
+
+- url: /dataclubday
+  script: clubday.app
+
+- url: /manage
+  script: clubday.app
+
+- url: /manage_edit
+  script: clubday.app
+
+- url: /manage_action
+  script: clubday.app
+
+- url: /clubdaycopy
+  script: clubday.app
+
+- url: /clubdaytransfer
+  script: clubday.app
+
+- url: /fakedatasf  
+  script: datasf.app
+
+- url: /emailcd
+  script: clubday.app
+
+
+# GET GGTC members for Current/Previous
+# Set GGTC_KOTOSHI in datastore.py
+# Set define("KOTOSHI","2019")  in _ggtc/membership/environment.inc
+- url: /(current)
+  script: sfhandler.app
+
+- url: /(previous)
+  script: sfhandler.app
+
+
+- url: /membersf
+  script: sfhandler.app
+
+# POST then GET GGTC membership per year
+
+# email addresses for MailChimp
+- url: /emailsf
+  script: listggtc.app
+
+- url: /emailsf/([\d]*)
+  script: listggtc.app
+
+# email addresses for MailChimp
+
+
+
+- url: /ggtc
+  script: sfhandler.app
+
+- url: /twilight
+  script: sfhandler.app
+
+- url: /adminsf
+  script: sfhandler.app
+
+- url: /adminsf/([\d]*)
+  script: sfhandler.app
+
+- url: /modifysf
+  script: sfhandler.app
+
+- url: /_actionsf
+  script: sfhandler.app
+
+- url: /writesf
+  script: sfhandler.app
+
+
+- url: /purgesf
+  script: sfhandler.app
+
+#- url: /financials
+#  script: financials.app
+
+
+- url: /.*
+  script: main.app
+

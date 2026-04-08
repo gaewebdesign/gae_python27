@@ -1,0 +1,140 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("/assets/css/table.css");')
+@import url("/assets/css/library.css");')
+-->
+
+.eline{
+        font-family: "Comic Sans MS", "Brush Script MT", cursive;
+        font-size:24 px;
+        background: #fefefe;
+        background-color: #ffeeff;
+        background-color: rgb(255,255,255);
+        border: none;
+        border-bottom: 1px solid black;
+        height : 45 px;
+        width: 20%;
+}
+
+
+</style>
+<script language="JavaScript" src="/assets/javascript/sorttable.js"></script>
+<script language="JavaScript" src="/assets/javascript/library.js"></script>
+
+<body>
+
+<style type = "text/css">
+#sch {
+#      position:absolute;
+       left: 200px;
+#       top: 50px;
+       border:1px solid;
+       width:500px; height:200px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;}
+
+
+#open {
+#      position:absolute;
+       left: 200px;
+#      top: 300px;
+       border:1px solid;
+       width:500px; height:90px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+#capt {
+#      position:absolute;
+       left: 200px;
+#      top: 450px;
+       border:2px solid;
+       width:500px; height:75px; 
+       background:#e8f6f9; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+
+</style>
+
+<center>
+<h2>{{TITLE}}</h2>
+<table cellpadding="2">
+<th>
+
+</table>
+
+<p>
+
+<table id="tablefont" width="50%">
+
+<!--
+<form id="_DELETE"  action="/modify" method="post">
+-->
+<form  id="_action" action ="/_action" method="post">
+
+
+<input name="_DELETE" type ="submit" value="Delete from Database" > <br>
+<input name="_EDIT" type ="submit" value="Edit Database" > <br>
+<input name="_ADD" type ="submit" value="Add to Database" > <br>
+
+
+</thead>
+
+
+<table align="center" class="sortable" width="80%">
+
+<thead>
+<tr>
+
+</thead>
+
+<input type="hidden" name = "keyid" value = "{{ Member.unix}},{{ Model }}" >
+
+<input type="hidden" name = "year" value = "{{ Member.year}}" >
+<input type="hidden" name = "signup" value = "{{ Member.date}}" >
+
+<input type="hidden" name = "unix" value = "{{ Member.unix}}" >
+<input type="hidden" name = "Model" value = "{{ Model }}" >
+
+
+<tr><td>YEAR <td>{{YEAR}}
+<tr><td>SIGNUP <td>{{Member.date}}
+<tr><td>Model <td>{{Model}}
+<tr><td>KEY <td>{{Member.unix}}
+
+<tr><td>NAME 
+<td><input name="fname" value = "{{Member.fname}}" > &nbsp;&nbsp;&nbsp;
+<input name="lname" value = "{{Member.lname}}"> <br>
+
+
+<tr><td>NTRP <td><input class="eline"  style="width:10%" maxlength="10" name="ntrp" value = "{{Member.ntrp}}"> <br>
+<tr><td>ADDRESS <td><input class="eline"  style="width:30%" maxlength="50" name="address" value = "{{Member.address}}" > <br>
+<tr><td>CITY <td><input class="eline"  style="width:20%" maxlength="50" name="city" value = "{{Member.city}}" > <br>
+
+<tr><td>ZIP <td><input class="eline"  style="width:10%" maxlength="10"  name="zip" value = "{{Member.zip}}" ><br>
+<tr><td>PHONE <td><input class="eline"  style="width:20%" maxlength="20"  name="phone" value="{{Member.phone}}"> <br>
+
+
+<tr><td>EMAIL <td><input class="eline"  style="width:30%" maxlength="50" name="email" value="{{Member.email}}" > <br>
+
+<tr><td>MTYPE <td><input class="eline"  style="width:30%" maxlength="50" name="mtype" value="{{Member.mtype}}" > <br>
+<tr><td>COUNT <td><input class="eline"  style="width:30%" maxlength="50" name="zknt" value="{{Member.zknt}}" > <br>
+
+</table>
+
+</form>
+
+</html>
