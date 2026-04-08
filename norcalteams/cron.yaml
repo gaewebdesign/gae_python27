@@ -1,0 +1,11 @@
+cron:
+
+- description: Active Job 
+  url: /standings
+  schedule: every 24 hours
+  timezone: America/Los_Angeles
+
+#- description: Shortlist Job 
+#  url: /short
+#  schedule: every 30 hours
+#  timezone: America/Los_Angeles

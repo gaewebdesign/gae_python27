@@ -1,0 +1,16 @@
+cron:
+
+# url: /cron is same as /cronaddroster
+- description: Cron AddRoster
+  url: /cron
+  schedule: every 4 hours
+  timezone: America/Los_Angeles
+
+# cronaddteams
+# cronaddroster
+# crondelteams
+
+#- description: Cron AddTeam
+#  url: /cronaddteams
+#  schedule: every 24 hours
+#  timezone: America/Los_Angeles

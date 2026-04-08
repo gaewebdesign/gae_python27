@@ -1,0 +1,95 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("assets/css/table.css");')
+@import url("assets/css/library.css");')
+-->
+</style>
+<body>
+
+<style type = "text/css">
+#sch {
+#      position:absolute;
+       left: 200px;
+#       top: 50px;
+       border:1px solid;
+       width:500px; height:200px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;}
+
+
+#open {
+#      position:absolute;
+       left: 200px;
+#      top: 300px;
+       border:1px solid;
+       width:500px; height:90px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+#capt {
+#      position:absolute;
+       left: 200px;
+#      top: 450px;
+       border:2px solid;
+       width:500px; height:75px; 
+       background:#e8f6f9; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+
+</style>
+
+<center>
+<h2>Admin Page</h2>
+
+<p>
+Teams
+<table align="center" class="sortable" width="65%">
+<thead>
+<tr>
+<th scope="col">ID</th>
+<th scope="col">Level</th>
+<th scope="col">Team</th>
+<th scope="col">Captain</th>
+<th scope="col">Last Updated</th>
+
+
+</thead>
+
+<form name="captain" action="{{Site}}/editplayer" method="POST">
+{% for e in Teams %}
+<tr>
+<td>{{e.id}}</td>
+<td>{{e.level}}</td>
+<td>{{e.name}} </td>
+<td>{{e.captain}} </td>
+<td>{{e.timestamp}}</td>
+
+<!--<input type="hidden" name={{e.key}}[] value={{e.key}}> </td> -->
+<!--<td><input type="text" size=15 name={{e.key}}[] value={{e.password}}> </td> -->
+
+</tr>
+{% endfor %}
+<tr>
+
+</tr>
+</form>
+</table>
+
+
+
+</html>
+

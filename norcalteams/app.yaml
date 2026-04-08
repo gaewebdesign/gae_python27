@@ -1,0 +1,106 @@
+# app.yaml 
+# dev_appserver.py cupertinousta
+# appcfg.py update cupertinousta
+# grep -rl "string" /path
+# grep -rnw . -e "container"
+# roger.okamoto@gmail.com
+
+
+#application: gaeapptestbed
+#application: ustaleagues-1183
+application: norcalteams
+
+version: 1 
+runtime: python27
+api_version: 1
+threadsafe: true
+env_variables:
+   HOMECOURTS: 'Cuesta'
+
+
+handlers:
+
+- url: /assets
+  static_dir: assets
+
+- url : /
+  script: display.app
+
+# these are active
+# go to the listdivision.asp page to get the flights
+# save current flight information (wins/losses/playoff)
+- url : /getflight/([\d]*)
+  script:    main.app
+
+- url : /getflights
+  script:    main.app
+
+# go to the standings.asp/l=1700 page to get the team standings
+# this is the fastest way as it has win/loss records
+# has order but not flight  name
+- url : /[get]{0,3}stand/([\d]*)
+  script:    standings.app
+
+- url : /[get]{0,3}standings
+  script:    standings.app
+
+# this is the SLOWEST  way as each team web page opened to win/loss record
+# uses limit 
+- url : /getrecord/([\d]*)
+  script:    record.app
+
+- url : /getrecords
+  script:    record.app
+
+- url : /[get]{0,3}playoff/[\d]*
+  script:    playoff.app
+
+
+
+# --------------------------------
+
+- url : /player
+  script:    player.app
+
+- url : /team
+  script:    player.app
+
+
+
+- url: /[SAMWxC\d\.+]*
+  script: display.app
+
+- url : /display/([\d]*)
+  script:    display.app
+
+- url : /login
+  script:    logger.app
+
+
+- url: /jsonruser
+  script:    jsonhandler.app
+
+- url : /updateflight/([\d]*)  # gets the win/loss record of a flight
+  script:  cron.app
+
+- url : /active
+  script:  cron.app
+
+- url : /short
+  script:  cron.app
+
+#- url : /standings/([\d]*)
+#  script:  cron.app
+
+- url : /admin
+  script:  admin.app
+
+- url : /test
+  script:  main.app
+
+
+- url : /set
+  script:  mycookie.app
+
+- url : /get
+  script:  mycookie.app

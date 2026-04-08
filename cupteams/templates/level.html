@@ -1,0 +1,156 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("assets/css/table.css");')
+@import url("assets/css/library.css");')
+-->
+</style>
+<script language="JavaScript" src="/assets/javascript/sorttable.js"></script>
+<script language="JavaScript" src="/assets/javascript/library.js"></script>
+
+<body>
+
+<style type = "text/css">
+#sch {
+#      position:absolute;
+       left: 200px;
+#       top: 50px;
+       border:1px solid;
+       width:500px; height:200px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;}
+
+
+#open {
+#      position:absolute;
+       left: 200px;
+#      top: 300px;
+       border:1px solid;
+       width:500px; height:90px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+#capt {
+#      position:absolute;
+       left: 200px;
+#      top: 450px;
+       border:2px solid;
+       width:500px; height:75px; 
+       background:#e8f6f9; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+
+</style>
+
+<center>
+<h2>Cupertino USTA Rosters</h2>
+<table cellpadding="2">
+<th>
+{% for item in Levels %}
+<a style=text-decoration:non href=/{{ item.level }}> {{ item.level }}</a>&nbsp
+<th>
+     {% if item.level == "55MX8.0" %}
+           </table></th>
+           <table cellpadding="2">
+           <th>
+     {% endif %}
+
+     {% if item.level == "CW8.5" %}
+           </table></th>
+           <table cellpadding="2">
+           <th>
+     {% endif %}
+
+
+     {% if item.level == "18MX9.0" %}
+           </table></th>
+           <table cellpadding="2">
+           <th>
+     {% endif %}
+
+     {% if item.level == "40MX9.0" %}
+           </table></th>
+           <table cellpadding="2">
+           <th>
+     {% endif %}
+
+
+     {% if item.level == "55AW8.0" %}
+           </table></th>
+           <table cellpadding="2">
+           <th>
+     {% endif %}
+
+
+     {% if item.level == "18AW4.5" %}
+           </table></th>
+           <table cellpadding="2">
+           <th>
+     {% endif %}
+
+
+     {% if item.level == "65AM3.5" %}
+           </table></th>
+           <table cellpadding="2">
+           <th>
+     {% endif %}
+
+     {% if item.level == "40AW4.5+" %}
+           </table></th>
+           <table cellpadding="2">
+           <th>
+     {% endif %}
+
+
+  {% endfor %} 
+
+
+</table>
+
+<p>
+<center>Click on top row to sort</center>
+<table align="center" class="sortable" width="80%">
+
+<thead>
+<tr>
+<th scope="col">Date</th>
+<th scope="col">First Name</th>
+<th scope="col">Last Name</th>
+<th scope="col">Team</th>
+<th scope="col">Captain</th>
+
+
+</thead>
+
+
+{% for e in PlayerList %}
+<tr>
+<td>{{e.rdate}}</td>
+<td>{{e.fname}}</td>
+<td>{{e.lname}} </td>
+<td>{{e.team}} </td>
+<td>{{e.captain}} </td>
+</tr>
+{% endfor %}
+
+
+
+</table>
+
+
+
+</html>
+

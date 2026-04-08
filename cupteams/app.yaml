@@ -1,0 +1,112 @@
+# app.yaml 
+# dev_appserver.py cupertinousta
+# appcfg.py update cupertinousta
+
+# http//localhost:8080
+# run these one directory higher
+# ~/Downloads/google_appengine/dev_appserver.py cupertinousta
+# ~/Downloads/google_appengine/appcfg.py update cupertinousta
+
+# https://cloud.google.com/appengine/docs/standard/python/download
+# gcloud components install app-engine-python-extras
+# gcloud components update
+
+#application: gaeapptestbed
+# tennis.mutt@gmail.com
+# templates/display.html
+# --no_cookies
+
+# cronaddteams
+# cronaddroster
+# python v 2.7.15 
+
+# gcloud -v
+# python --version
+
+#Google Cloud SDK 215.0.0
+#app-engine-python 1.9.75
+#app-engine-python-extras 1.9.74
+#bq 2.0.34
+#cloud-datastore-emulator 2.0.2
+#core 2018.09.04
+#gsutil 4.33
+
+# /google-cloud-sdk/lib/third_party/setuptools/ssl_support.py
+
+
+# /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages
+
+# /gae/google_appengine/lib/cacerts.txt 
+# /gae/google_appengine/lib/urlfetch_cacerts.txt
+
+
+
+# shellac, oil, water based primer
+
+application: cupertinoustateams
+
+version: 1
+runtime: python27 
+api_version: 1
+threadsafe: true
+
+builtins:
+- deferred: on
+- appstats: on
+
+#libraries:
+#- name: ssl
+#  version: latest
+
+env_variables:
+  PYTHONHTTPSVERIFY: 1
+
+
+#  HTTPS: 1
+
+
+handlers:
+
+- url: /assets
+  static_dir: assets
+
+- url: /getteams
+  script: main.app
+
+- url: /deleteteams
+  script: main.app
+
+- url: /getroster
+  script: main.app
+
+- url: /
+  script: display.app
+
+- url: /[SNAMWXC\d\.\-+]*
+  script: display.app
+
+
+- url: /cupertino
+  script: display.app
+
+- url: /admin
+  script: admin.app
+
+- url: /test
+  script: test.app
+
+- url: /version
+  script: test.app
+
+- url: /playoffs
+  script: playoffs.app
+
+
+# cronaddteams
+# cronaddroster
+# crondelteams
+
+- url: /cron[\w]*
+  script: main.app
+
+
