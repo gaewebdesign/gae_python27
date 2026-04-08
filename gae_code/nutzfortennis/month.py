@@ -1,0 +1,359 @@
+  
+#from google.appengine.ext import webapp
+import webapp2
+
+
+#from google.appengine.ext.webapp.util import run_wsgi_app
+
+from google.appengine.ext.webapp import template
+from google.appengine.ext import db
+
+import os,re,datetime,sys, calendar,cgi,types
+
+
+from appengine_utilities.sessions import Session
+
+import datastore,library
+
+import ndbstore
+import logger
+
+import string
+
+import user
+# http://www.fiveriversyoga.com/a-dedicated-life-practice
+
+
+class Day:
+    year=2013    
+    month=1    
+    day=1    
+    classtype=""
+    holiday = ""
+    courts = ""
+
+class Courts:
+     teamid = ""
+     name = desc = color = time = ""
+
+
+#
+#  def __init__ (self, teamid, name, desc):
+#    self.teamid= teamid
+#    self.name = name
+#    self.desc = desc
+
+#    time=""
+#    cts = ""
+#    owner= ""
+#    mine = False
+
+
+
+
+def Writeln( selfobj, *t):
+   for x in t:
+     selfobj.response.out.write(x )
+     selfobj.response.out.write(" ")
+
+   selfobj.response.out.write("<br>")
+
+
+def Write( selfobj, *t):
+   for x in t:
+     selfobj.response.out.write(x )
+     selfobj.response.out.write(" ")
+
+def MatchTime( d):
+
+   pm = "am"
+   hour = d.hour
+   minute = ""
+   if( d.hour == 12): 
+      pm = "pm"    
+   elif( d.hour > 12):
+      pm = "pm"
+      hour = d.hour - 12
+
+   if( d.minute > 0):
+      minute= ":"+str(d.minute)            
+
+   return str(hour)+minute+pm
+
+
+
+def FindMatches_old( y , m , d):
+
+        playerid = 20832    #CBell
+        playerid = 58252    #CJ
+        playerid = 145469    #KOng
+        playerid = 94120    #Jay
+
+        playerid = 114432    #GCaabay
+
+
+# Get the teamids of Player
+        g = datastore.Player.get_by_key_name( str(playerid) )
+        teams = g.teams
+        ustamatches=[]
+
+
+# Get active matches for each team
+        for teamid in teams:
+           g = datastore.Team.get_by_key_name( str(teamid) )
+           active = g.active
+           for _time in active:
+              tlist = [ _time , teamid ]
+              ustamatches.append( tlist)
+
+        ustamatches.sort()
+    
+        theDate = datetime.date(y,m,d)
+
+# Get just the matches for today
+        today = [ d for d in ustamatches if d[0] == theDate ]
+
+        r = []
+        for t in today:
+           c = Courts()
+           c.teamid = t[1]    # format is [ Datetime, teamid ]
+           r.append( c )
+
+        
+        return  r
+
+
+def FindMatches( selfobj,y , m , d):
+
+
+        playerid = 58252    #CJ
+        playerid = 94120    #Jay
+        playerid = user.ID()
+
+
+# Get the teamids of Player
+        g = ndbstore.Player.get_by_id( str(playerid) )
+
+        if (g == None):
+         return None
+
+
+        tlist = g.teams
+
+
+
+
+        blue = "5A49FB" # "88ccff"
+        blue_dark = "0000aa"
+        blue_darker = "001133"
+        purple = "c622ff"
+        green = "008000"
+        orange = "d66910"
+        magenta = "ff99ff"
+        red = "ee2211"
+        grey = "8888aa"
+        yellow = "ffff11"
+        brown = "4c3d00"
+        red2 = "F21C44"
+        blue2="27CAE7"
+        sharks="09434D"
+        cardinal ="401622"
+
+#       colors = [red,blue,green,orange,blue_dark,magenta,purple,grey,blue_darker,yellow,brown,red2,blue2,sharks,cardinal]
+        colors = [red,blue,green,orange,blue_dark,magenta,purple,grey,blue_darker,sharks,cardinal,yellow,brown,red2,blue2]
+        tcolor = {}
+        i=0
+        for t in tlist:
+           tcolor[t.id] = colors[i%len(colors)]         
+#          Writeln(selfobj,i,t.id,tcolor[t.id])
+           i = i + 1
+
+
+# Get active matches for each team
+        ustamatches=[]
+        for t in tlist:
+          g=ndbstore.PTeam.get_by_id( str(t.id))
+
+          if( g ):
+           for _match in g.active:                           #  g.active is a list of Match types ( desc , date)
+              tlist = [ _match.date , t.id, g.name, _match.desc ]
+              ustamatches.append( tlist )
+
+        ustamatches.sort()
+#       Writeln( selfobj, t.id , ustamatches )
+
+        theDate = datetime.date(y,m,d)
+
+        today = [ d for d in ustamatches if d[0].date() == theDate ]
+
+        r = []
+        for t in today:
+           c = Courts()
+
+           c.teamid = str(t[1])    # format is [ Datetime, teamid , name , desc]
+           c.name   = t[2]      # format is [ Datetime, teamid , name , desc]          
+           c.desc   = t[3]      # format is [ Datetime, teamid , name , desc]
+           c.color = tcolor[c.teamid]
+
+           c.time = MatchTime( t[0].time() )
+
+           d = string.split( c.name, "/")
+
+           #shorten name, remove first half before /
+           if( len(d) > 1):
+               c.name=d[1]
+
+           r.append( c )
+
+        return  r
+
+
+
+def FindCourts (y , m , d):
+        d = "DATETIME(" + str(y) + "," + str(m) + "," + str(d) + ")"
+        query="select __key__ from CourtTime where date= " + d
+        keys =  db.GqlQuery( query)
+
+        r = []
+        for k in keys:
+           p = db.get(k)
+           c = Courts()
+           c.time = library.stime(p.start)  
+
+
+           if( type(p.owner) is types.NoneType): 
+             c.cts  = library.listconv(p.courts)
+             c.cts  = c.cts # + " " + p.location    # Add the location (Mg = Mango)
+           else:
+             g = tempstore.Captain.get_by_key_name( p.owner )
+             c.cts = g.fname
+             sess = Session()
+             if( sess.get(keyname='user') ):
+                  if(sess['keyname'] == g.key().name()):
+                         c.mine = True             # To put in boldface (in html)
+#                        sess.delete()
+# TODO  Keep track of this session  - does it affect Login?                
+
+           r.append( c)
+
+        return r
+
+
+
+class MonthHandler(webapp2.RequestHandler):
+#   def __init__(self):
+#        pass
+
+    def Writeln(self,t):
+        self.response.out.write(t+"\n")
+
+    def Write(self,t):
+        self.response.out.write(t)
+
+
+    def get(self ,month,year):
+        m = ["Jan","January","February","March","April","May","June","July","August","September","October","November","December"]
+
+        month=int(month)
+        year=int(year)
+
+#       _id = logger.getPlayerID()
+#       Writeln(self , "id = ",_id)
+
+# Figure next month/year    
+        next_month = month + 1
+        next_year = year 
+        if( next_month > 12):
+               next_month = 1
+               next_year = year + 1
+
+# Figure previous month/year    
+        prev_month = month - 1
+        prev_year  = year 
+        if( prev_month < 1):
+               prev_month = 12
+               prev_year = year - 1
+
+# Properly initialize calendar to start on SUNDAY
+        calendar.setfirstweekday( calendar.SUNDAY)
+        cal = calendar.Calendar( calendar.SUNDAY)
+
+# Calculate the few days before/after this month
+        offdays=[]
+        for d in cal.itermonthdates(year , month ):
+            if( not re.search(str(year)+"-[0]*"+str(month) ,str(d) ) ):
+                   offdays.append( d)   # list of datetime objects
+
+# -----------------------------------------------------------------------
+
+        thismonth = calendar.monthcalendar(year, month ) 
+        nweeks = len(thismonth) 
+
+        index=0
+        Reservations=[]                 # Array of weeks
+        for w in range(0,nweeks):       # 0,1,2,3,4
+            week = thismonth[w]             # list of days of each week (0,0,0,0,1,2,3), (4,5,6,7,8,9,10)
+            wk = []
+            for x in week:   # either 0 (days before) or current day (1..31)
+                 d  = Day()
+                 d.day = x
+
+                 d.classtype = "weekday"
+                 if( x==0 ): 
+                    d.classtype = "previous"
+                    t = offdays[index]
+                    d.day= t.day
+                    d.month = t.month
+                    d.year  =  t.year
+                    index   = index + 1
+                 else:
+                    _d = calendar.weekday(year,month,x)
+                    if( _d == 5 or _d == 6):  d.classtype = 'weekend' 
+                    d.day = x
+                    d.month = month
+                    d.year = year
+
+
+                 d.holiday = library.Holiday(d.year,d.month,d.day)
+#                d.courts = FindCourts(d.year , d.month , d.day)
+                 d.courts = FindMatches(self,d.year , d.month , d.day)
+                 wk.append(d)
+
+            Reservations.append(wk)           
+            StartDate = StartTime = None;
+            Start =  library.GetReservationStart ( )
+            if(Start != None):
+               StartDate = Start[0]
+               StartTime = Start[1]
+
+        template_values = {
+               'monthname'     : m[month],
+               'month'     : month,
+               'year'      : year,
+               'LoginForm' : library.LoginForm(),
+               'Host'      : library.Host(),
+
+               'StartDate' : StartDate,
+               'StartTime' : StartTime,
+
+               'Next_month'     : next_month,
+               'Next_year'      : next_year,
+               'Prev_month'     : prev_month,
+               'Prev_year'      : prev_year,
+               'Month'            : Reservations,
+
+        }
+
+        path = os.path.join(os.path.dirname(__file__), 'templates','month.html')
+        self.response.out.write(template.render(path, template_values))
+
+
+
+
+app = webapp2.WSGIApplication(
+                       [  ('/month/([\d]*)/([\d]*)', MonthHandler),
+                       ], 
+                        debug=True)
+
+
+

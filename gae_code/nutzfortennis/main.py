@@ -1,0 +1,563 @@
+import webapp2
+
+from google.appengine.api import urlfetch
+
+from google.appengine.ext import db
+from google.appengine.ext import ndb
+
+
+from datetime import timedelta
+
+import urllib,re,datetime,string,sys,os
+
+import user
+
+class IDList( ndb.Model ):
+     id = ndb.StringProperty()
+     desc = ndb.StringProperty()
+
+
+class MatchList( ndb.Model):
+     desc = ndb.StringProperty()
+     date = ndb.DateTimeProperty()
+
+class MatchList2( ndb.Model):
+     status = ndb.StringProperty()           # Completed/Scheduled
+     match  = ndb.StringProperty()           # Week/Playoff/Districts/Sectionals
+     desc = ndb.StringProperty()             # All at ....
+     date = ndb.DateTimeProperty()           # Date of this match
+     opponent    = ndb.StringProperty()      # Opponent
+     opponent_id = ndb.StringProperty()      # Opponents team ID
+     where    = ndb.StringProperty()         # Home/Away 
+
+#class Player(db.Model):
+#   name = db.StringProperty()
+#   teams = db.StringListProperty()
+#   dates = db.ListProperty(datetime.date)
+
+
+# Create this for a player to put into calendar
+# Players has 3 items
+# playerid  The USTA ID
+# name      player's name
+# teams     list of  teams player is on
+class Player( ndb.Model):
+#    playerid = ndb.StringProperty()
+     name = ndb.StringProperty()
+     teams = ndb.StructuredProperty(IDList, repeated=True )
+     count = ndb.IntegerProperty()
+     current = ndb.IntegerProperty()
+
+class Team( ndb.Model):
+     teamid = ndb.StringProperty()
+     desc = ndb.StringProperty()
+
+class Roster( ndb.Model):
+     teamid = ndb.StringProperty()
+     name  = ndb.StringProperty()
+     alias = ndb.StringProperty()
+     color = ndb.StringProperty()
+
+     completed = ndb.StructuredProperty( MatchList , repeated=True)
+     active = ndb.StructuredProperty( MatchList , repeated=True)
+
+# IDList is a generic (id,name) list
+     players = ndb.StructuredProperty( IDList, repeated =True)
+     teams = ndb.StructuredProperty(IDList, repeated=True)
+
+#    players = ndb.StructuredProperty(Player, repeated=True)
+#    teams = ndb.StructuredProperty(Team, repeated=True)
+
+
+
+class PTeam( Roster ):
+     pass
+
+
+def Writeln( selfobj, *t):
+   for x in t:
+     selfobj.response.out.write(x )
+     selfobj.response.out.write(" ")
+
+   selfobj.response.out.write("<br>")
+
+def Write( selfobj, *t):
+   for x in t:
+     selfobj.response.out.write(x )
+     selfobj.response.out.write(" ")
+
+def alias( s ):
+    s = s.lstrip(" ")
+    t = s.split(" ")
+    if( len(t)>2):
+      alias = t[0][0]+t[1][0]
+    else:
+      alias =s[0]+s[1]
+
+    return alias
+
+
+# Use to either Create or Update a team
+# teamid:  USTA ID
+# ObjTeam: either Roster (my team) or PTeam ( player's other team)
+# Roster/Pteam are identical classes, different name to separate in Datastore Viewer
+def CreateTeam(self,teamid, ObjTeam):
+
+      Writeln( self, "Create Team for id= ",teamid)
+
+      url  = "http://www.ustanorcal.com/teaminfo.asp?id="+str(teamid)
+      result = urlfetch.fetch(url)
+      scraped = result.content
+
+      pteamKey = ndb.Key(ObjTeam, str(teamid) )
+
+      o = pteamKey.get()
+      if( o != None):
+        Writeln(self, "Team exists")
+      else:
+        Writeln(self, "Team create")
+        o = ObjTeam( key=pteamKey)
+
+      o.teamid = str(teamid)
+
+
+# ----Team Name
+#     <title>USTA NorCal - Team Information | GOLDEN GATE PK 18MX6.0A</title>
+#     group(1), group(2)
+#     RegExp gobbles up normal USTA team names, skips personalized team name characters
+      pattern = r"<title>([ \w\d-]*)\|([ \/\w\d\.]*)"
+      m = re.search(pattern,scraped )
+
+      if( m ):
+        o.name=m.group(2).lstrip()
+        o.alias = alias(o.name)
+        Writeln(self, o.name )
+        Writeln(self, o.alias)
+
+# ---- Search for Active Matches (Dates, time and description)
+#&nbsp;07/28/13</td><td align=center bgcolor=#D2D2FF>Sun</td><td
+#All 3 at &nbsp;12:00 PM warm-up cts avail 11:30<td
+
+# want to  match full description, but gobbles  too much 
+#     rexp = rexp + r"([ \d\w\s\D\/]*)<td"
+
+      rexp = r"nbsp;([\d]{2})\/([\d]{2})\/([\d]{2})<\/td><td align=center bgcolor=[#\d\w]*>[\w]{3}</td><td>"
+      rexp = rexp + r"[\s]*([ \/&\d\w;]*)([\d]{1,2}:[\d]{1,2}[ ][AM|PM]{2})"
+
+      r = re.compile(rexp,re.IGNORECASE )
+      match = r.findall( scraped )
+
+      activelist=[]
+      for m in match:
+          month =m[0]
+          day  = m[1]
+          year  = m[2]
+          desc = m[3] + "" + m[4]
+
+#desc : get the match time
+#All 3 at  6:00 PM 
+
+
+          mtime = re.search(r"([\d]{1,2}):([\d]{2})[ ]*(AM|PM)" ,desc)
+
+          hr = mtime.group(1)
+          min = mtime.group(2)
+          am = mtime.group(3)
+
+          delta = timedelta(hours=int(hr) , minutes=int(min) )
+          if( am=="PM" and int(hr)!=12): delta = delta + timedelta(hours=12)
+
+          theDate = datetime.datetime(2000+int(year), int(month),int(day) ) + delta
+
+
+          usta = MatchList()
+          usta.desc = desc
+          usta.date = theDate
+          activelist.append( usta )
+
+      Writeln(self, "ACTIVE")
+      Writeln(self, activelist)
+      o.active = activelist
+
+# ---- Search for Completed matches
+      pattern = r"<a href=scorecard\.asp\?id=([\d]*)&[:l=\d]*>"
+      pattern +=  r"([\d]{2})\/([\d]{2})\/([\d]{2})"
+
+      r = re.compile(pattern,re.IGNORECASE )
+      match = r.findall( scraped )
+      Writeln( self, "COMPLETED" )
+      clist=[]
+      for i, d in enumerate(match):      #returns i(ndex) and a 3-Tuple
+        month = int(d[1])
+        day   = int(d[2])
+        year  = int(d[3]) + 2000
+        usta = MatchList()
+        usta.date =  datetime.datetime(year,month,day)
+        clist.append( usta  )
+
+      Writeln(self, clist )
+      o.completed = clist
+
+
+# ---- Search for Players
+      pattern = r"nowrap><a href=playermatches\.asp\?id=([\d]*)>([ \-\w\d\'\.]*)[, ]*([ \-\w\d\'\.]*)[ <>\w=#\d\/]*?nowrap>([ \w]*)"
+
+      r = re.compile(pattern,re.IGNORECASE )
+      match = r.findall( scraped )
+      Writeln(self, "PLAYERS ")
+
+#  tuple  0: ustaid 1: last 2:first
+      playerlist=[]
+      for i, tuple in enumerate(match):      #returns i(ndex) and a 3-Tuple
+        p=IDList()
+        p.id = tuple[0]
+        p.desc = tuple[2] + tuple[1] 
+        Writeln( self, p )
+        playerlist.append(p)
+
+      o.players = playerlist
+
+# Put everything into database 
+      o.put()
+      Writeln( self, "Done ")
+
+
+def CreateTeam_New(self,teamid,ObjTeam):
+
+      Writeln( self, "CreateTeam_New for id= ",teamid)
+
+      url  = "http://www.ustanorcal.com/teaminfo.asp?id="+str(teamid)
+      result = urlfetch.fetch(url)
+      s = result.content
+
+      t = s.replace("\r","")
+      scraped = t.replace("\n","")
+
+
+# Create new team
+      pteamKey = ndb.Key(ObjTeam, str(teamid) )
+      o = pteamKey.get()
+      if( o != None):
+            Writeln(self, "Team exists")
+      else:
+            Writeln(self, "Team create")
+            o = ObjTeam( key=pteamKey)
+
+      return
+
+# Initilize (outside loop )
+      teamname = ""
+
+# Get the Team name (no extra 1 or 2 at end to worry about)
+      m = re.search(r"<title>([ \w\d-]*)\|([ \/\w\d\.]*)",scraped )
+      if( m ):
+        teamname=m.group(2).lstrip()
+
+      Writeln(self , "*"*20,)
+      Writeln(self , "team name = ", teamname )
+
+# Regexp pattern
+
+      pattern = r"<a name=status>(Scheduled|Confirmed)([^.]*?)</td>"  #0: Status (Confirmed/Scheduled)
+                                          #  1: always empty Confirmed/Scheduled goes into 0:
+      pattern += r"<td([^.]*?)</td>"      # 2: Match  (could be Playoffs/Districts/Sectionals or the week)
+      pattern += r"<td([^']*?)</td>"      # 3: Date
+      pattern += r"<td([^.]*?)</td><td>"  # 4: day of week (not used)
+      pattern += r"([^\\S]*?)<td[^.]*?>"  # 5: Description  NOTE the \\n
+      pattern += r"<a href=Teaminfo\.asp\?id=([\d]*)"  # 6: Opponents teamid
+      pattern += ">([^\\n]*?)</a></td>"       # 7: Opponents team name NOTE the \\n (new line) non-greedy grab until </a>..
+      pattern += r"<td[^.]*?>(Home|Away)"     #8: Home/Away (last until the score recorded)
+
+      match = re.findall(pattern,scraped )
+
+      for i,m in enumerate(match):  # returns list 0->8 of each found item
+           status = m[0]
+           _match   = m[2]
+           _date   = m[3]
+           _desc   = m[5]
+           _opponent_id   = m[6]
+           _opponent   = m[7]
+           _where   = m[8]
+
+
+# Initial Conditons
+           match = ""                             # (Week)/Playoff/District/Sectional
+           date = datetime.datetime(2000, 1,1 )   # Sometimes no match date
+           desc = ""                              # Description of match 'All 3 at'
+           opponent_id = ""                       # Opponent's team id
+           opponent = ""                          # Opponent's team name
+           where = ""                             # Home/Away
+
+           delta = timedelta(hours=0)             # Time of match hr:min 
+
+# Convert Over from regular expression data to actual
+
+# Match  (Week or PlayOff/Districts/Sectionals)
+           m = re.search(r"(PlayOff)",_match)
+           if(m != None):
+            match = m.group(0)
+           else:
+            match = "-"
+
+# Match Date
+
+           m = re.search(r"([\d]{1,2})\/([\d]{1,2})\/([\d]{1,2})",_date)
+           if (m != None):
+              try:
+                 month = m.group(1)
+                 day   = m.group(2)
+                 year  = m.group(3)
+                 date = datetime.datetime(2000+int(year), int(month),int(day) )
+              except:
+                 print "Match Date: Unexpected exception"
+
+
+# Match Time (from description )
+           m = re.search(r"([\d]{1,2}):([\d]{2})[ ]*(AM|PM)",_desc)
+           if( m != None ):
+              try:
+                 hr = m.group(1)
+                 min = m.group(2)
+                 am   = m.group(3)
+                 delta = timedelta(hours=int(hr) , minutes=int(min) )
+                 if( am=="PM" and int(hr)!=12): delta = delta + timedelta(hours=12)
+              except:
+                 print "Match time: Unexpected exception"
+
+#Fix up Opponent (remove last 1 or 2)
+           opponent = _opponent
+           if( _opponent[-1:]== "1" or _opponent[-1:]== "2"): 
+             opponent = _opponent[:-1] 
+
+           Writeln(self, status)
+           Writeln(self, "match =", match )
+           Writeln(self, "date = " ,date+delta)
+           Writeln(self, "desc = ",_desc )
+           Writeln(self, "opponent id = ",_opponent_id)
+           Writeln(self, "opponent = ", opponent)
+           Writeln(self, "where = ",_where)
+           Writeln(self, "--")
+
+
+# Players on this team (id,lname,fname)
+#     ------ outside loop -------
+      pattern = r"<a href=playermatches\.asp\?id=([\d]*)>([^.]*?)[,]([^.]*?)</a></td><td"
+
+      r = re.compile(pattern,re.IGNORECASE )
+      match = r.findall( scraped )
+      Writeln(self, "PLAYERS ")
+      for i, tuple in enumerate(match):      #returns i(ndex) and a 3-Tuple
+            Writeln(self, i, tuple)
+
+# Store into Db
+
+
+
+class MainHandler(webapp2.RequestHandler):
+
+    def get(self):
+
+#      self.response.headers['Content-Type'] = 'text/html'
+#     self.response.out.write( "hello ")
+
+
+      team=53996  # SCTC
+      team=52567  # GGP
+      team=54054  # Hopkins
+      team=52138  # Morgan Hill
+      team=52339  # Rocelle
+      team=52981  # Cupertino
+
+      team=54009  # GGateway
+      team=54051  # Chamisil
+      team=54054  # South Bay
+
+#     CreateTeam(self, team, PTeam);
+      url = "http://"+os.environ["SERVER_NAME"]
+      if (re.search("localhost",url )): url = "http://localhost:8080"
+
+      self.redirect(url+"/month/10/2013")
+
+
+
+class PlayerHandler(webapp2.RequestHandler):
+
+    def get(self):
+
+      pName = "Jay Pineda"
+      playerid = 58252  #CJ
+
+      playerid = user.ID()
+      pName = user.Name()
+
+      path = self.request.path
+
+      if ( "newplayerteam" in path ):
+         Writeln(self, "CreatePlayerTeam")
+         self.CreatePlayerTeams(playerid )
+      elif ( "newplayer" in path):
+         Writeln(self, "CreatePlayer")
+         self.CreatePlayer(playerid)
+
+
+#     self.CreatePlayer( playerid ,name=pName)
+#     self.CreatePlayerTeams( playerid )
+
+
+# Create team , name,schedule
+# teamID  USTA team ID
+# OurTeam either Roster or PTeam class  (to separate in GAE Console )
+    def CreateTeam(self,teamid,OurTeam,name="-"):
+
+      url  = "http://www.ustanorcal.com/teaminfo.asp?id="+str(teamid)
+      result = urlfetch.fetch(url)
+      scraped = result.content
+
+      teamKey = ndb.Key(OurTeam, str(teamid) )
+      g = OurTeam( key=teamKey)
+
+# ----Team Name
+#     <title>USTA NorCal - Team Information | GOLDEN GATE PK 18MX6.0A</title>
+#     group(1), group(2)
+
+      pattern = r"<title>([ \w\d-]*)\|([ \w\d\.]*)"
+
+      m = re.search(pattern,scraped )
+
+
+# Create each Team for this player
+    def CreatePlayerTeams(self,playerid):
+
+      Writeln( self, "CreatePlayerTeams for player id ="+str(playerid) )      
+
+      g = Player.get_by_id( str(playerid) )
+
+      tlist = g.teams
+      for t in tlist:
+         Writeln(self,"create team ", t.id )
+         CreateTeam(self, t.id, PTeam)
+#        CreateTeam_New(self, t.id, PTeam)
+#        if( int(t.id) ==53767 ):  break
+
+
+# Create a Player
+# IDList of
+# desc : name of team
+# id   : team id
+
+    def CreatePlayer(self,playerid,name="-"):
+
+
+      playerKey = ndb.Key(Player, str(playerid) )
+      g = Player( key=playerKey)
+
+      Writeln(self , "for " , user.Name() ,"id = ",user.ID() )
+
+      if( g != None):
+         Writeln( self, "Player exists " )
+      else:
+         Writeln( self, "Player created (TODO fix this)" )
+
+
+      g.name = name
+
+      teams =  self.scrap_teamIDs( playerid )
+
+      Writeln(self, "ADD TEAMS TO DB " )
+      tlist=[]
+      for t in teams:
+        d = IDList()
+        d.desc = "-"
+        d.id=t
+
+        if( d.id == "55535"):
+          Writeln(self, "SKIPPING ", d.id )
+          continue
+
+        tlist.append(d)
+
+      g.teams = tlist
+      Writeln(self, "teams", g.teams )
+
+
+      g.put()
+
+
+#for this team, get the team dates
+    def scrap_TeamDates( self,teamid):
+
+      url  = "http://www.ustanorcal.com/teaminfo.asp?id="+str(teamid)
+      result = urlfetch.fetch(url)
+      scraped = result.content
+
+# ----Search for Match Times
+      rexp = r"nbsp;([\d]{2})\/([\d]{2})\/([\d]{2})"
+      r = re.compile(rexp,re.IGNORECASE )
+      match = r.findall( scraped )
+
+      active=[]
+      for i,d in enumerate(match):      #returns i(ndex) and a 3-Tuple
+           month = int(d[0])
+           day   = int(d[1])
+           year  = int(d[2]) + 2000
+           active.append( datetime.date(year,month,day) )
+
+      return active
+
+# for this player, get the team IDs
+    def scrap_teamIDs( self,playerid):
+
+        url  = "http://www.ustanorcal.com/playermatches.asp?id="+str(playerid)
+        result = urlfetch.fetch(url)
+        scraped = result.content
+
+        pattern_league = r'>(20[\d]{2}) (Mixed|Adult|Combo|Tri-Level)'
+        pattern_teamID = r'<a href=\"teaminfo\.asp\?id=([\d]*)">'
+
+        pattern = pattern_league + "|" + pattern_teamID
+
+        r = re.compile( pattern ,re.IGNORECASE )
+        match = r.findall( scraped )
+
+        teams=[]
+
+        year = datetime.datetime.now().year
+#       Writeln( self, year )
+        year="2013"
+        for i, found in enumerate(match):      #returns i(ndex) and Tuple
+
+             stripped = [ s for s in found if len(s)>0 ]
+#            0 ['2013', 'Mixed'] 
+#            1 ['53825'] 
+#            2 ['2013', 'Mixed'] 
+#            3 ['54054'] 
+             Writeln(self, i, stripped )
+
+             if stripped[0] =="2012" : break
+             if stripped[0] =="2011" : break
+             if stripped[0] =="2010" : break
+             if stripped[0] =="2009" : break
+
+             if len(stripped[0])> 4 : 
+               teams.append( stripped[0])
+             if i > 26 : break
+
+
+#       Writeln( self, teams )
+        return teams
+
+
+
+
+app = webapp2.WSGIApplication(
+                                     [
+                                      ('/', MainHandler),
+                                      ('/main', MainHandler),
+                                      ('/newplayer', PlayerHandler),
+                                      ('/newplayerteams', PlayerHandler)
+
+                                     ],
+                                     debug=True)
+
+
+

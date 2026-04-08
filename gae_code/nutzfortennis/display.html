@@ -1,0 +1,46 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("/assets/css/patc.css");
+-->
+</style>
+<SCRIPT LANGUAGE="JavaScript" SRC="/assets/javascript/sorttable.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="assets/javascript/library.js"></SCRIPT>
+
+<body bgcolor="lightblue">
+<title>USTA Team</title>
+
+<center>
+
+<p><br><p>
+
+<h2>USTA Team </h2>
+<table align="center" class="sortable" width="60%">
+<thead>
+<tr> 
+
+<th> </th>
+
+{% for e in Dates %}
+<th scope="col" width="7%" align="center">{{e.month}}-{{e.day}}</th>
+{% endfor  %}
+
+</tr>
+</thead>
+
+<div align="center">
+</center>
+
+{% for e in Player %}
+   <tr>
+
+      <td> <a style=text-decoration:none href="http://www.ustanorcal.com/playermatches.asp?id={{e.ustaid}}">{{ e.fname}} {{e.lname}} </a> </td>
+      {% for e in Dates %}
+      <td align="center"> x </td>
+      {% endfor  %}
+
+   </tr>
+{% endfor  %}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="em">
+<head>
+
+<style type = "text/css"> 
+<!--
+@import url("/assets/css/courts.css");
+-->
+</style>
+<!--
+http://www.fieldofschemes.com/newstyles.css
+-->
+</head>
+
+<body>
+<title>Month</title>
+
+<div id=containerlogin>
+ {{ LoginForm|safe }}
+</div>
+
+
+<form name="login" action="http://localhost:8080/login" method="POST">&nbsp;<input type="hidden" name="path" value ="/month/6/2013"><input type="submit" value="Login"><input type="text" id="e50" size="7" name="username">&nbsp;<input type="password" id="e50" size="7" name="password">&nbsp;</form>
+
+
+<center>
+<h1>{{monthname}} {{year}} </h1>
+
+<div id = "containertop">
+<!--
+<a href="{{Host}}/instructions">Instructions</a><br>
+<a href="{{Host}}/summary">Summary of Reservations</a><br>
+<a href="{{Host}}/captain">Captain's Page</a><br><br>
+-->
+
+<a href= "{{Host}}/month/{{Prev_month}}/{{Prev_year}}" >Previous Month</a> 
+&nbsp;&nbsp;&nbsp;&nbsp; 
+<a href= "{{Host}}/month/{{Next_month}}/{{Next_year}}" >Next Month</a> 
+</div>
+
+<div id = "container">
+<br>
+<table id="month">
+<thead>
+<tr>
+<th class="weekend" >Monday</th>
+<th >Tuesday</th >
+<th >Wednesday</th >
+<th >Thursday</th > 
+<th >Friday</th >
+<th class="weekend">Saturday</th >
+<th class="weekend" >Sunday</th >
+</tr>
+</thead >
+<tbody>
+
+{% for week in Month %}
+   <tr>
+   {% for day in week %}
+      <td class="{{day.classtype}}">  {{ day.day }}
+<!--
+
+      <td class="{{day.classtype}}"> <a href="{{Host}}/courts/{{day.month}}/{{day.day}}/{{day.year}}"> {{ day.day }}</a>
+-->
+      {{ day.holiday }} <br>
+<span style="font-family: verdana,sans-serif; font-size:12px;">
+      {% for c in day.courts %}
+
+          <a href = "http://www.ustanorcal.com/teaminfo.asp?id={{c.teamid}}">{{c.teamid}}</a>
+<!--
+          {% if c.mine %}
+            <b>
+          {% endif %}
+          {{c.cts}}
+          {% if c.mine %}
+            </b>
+          {% endif %}
+-->
+          <br>
+
+      {% endfor %}
+</span>
+
+   {% endfor %}
+   </tr>
+{% endfor %}
+
+</div>
+
+

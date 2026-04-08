@@ -1,0 +1,42 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("/assets/css/patc.css");
+-->
+</style>
+<SCRIPT LANGUAGE="JavaScript" SRC="/assets/javascript/sorttable.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="assets/javascript/library.js"></SCRIPT>
+
+<body>
+<title>Month</title>
+
+<center>
+
+
+<table align="center" class="sortable" >
+<thead>
+<tr>
+<th scope="col">Date</th>
+<th scope="col">First Name</th>
+<th scope="col">Last Name</th>
+<th scope="col">Team</th>
+<th scope="col">Captain</th>
+</tr>
+</thead>
+<div align="center">
+
+
+</center>
+
+{% for e in Member %}
+   <tr>
+      <td> {{ e.date}} </td>
+      <td> {{ e.fname}} </td>
+      <td> {{ e.lname}} </a> </td>
+      <td> <a style=text-decoration:none href="http://www.ustanorcal.com/teaminfo.asp?id={{e.teamid}}">{{ e.team}} </a> </td>
+      <td> {{ e.captain}} </td>
+   </td>
+{% endfor  %}

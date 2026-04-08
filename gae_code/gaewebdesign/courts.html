@@ -1,0 +1,70 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("assets/css/patc.css");')
+@import url("assets/css/library.css");')
+-->
+
+</style>
+<body bgcolor="d2d2ff">
+<title>Courts</title>
+
+<div id=purple_block>
+ {{ LoginForm }} 
+</div>
+
+
+<center>
+<h1>Courts Available for {{month}}/{{day}}/{{year}} </h1>
+<p>
+<h2>Select the courts you want for your team  </h2>
+</center>
+
+
+
+<center>
+<table width=500>
+<thead>
+<tr><th scope="col">Select</th><th scope="col">Courts</th><th scope="col" align="center">Time</th><th scope="col" align="left">Description
+</tr>
+</thead>
+<form name="reserve" action="{{Site}}" method="POST">
+{% for e in  Courtlist %}
+ <tr>
+
+   {% if e.open %}
+     <td width=50><input type="radio" name="courts" value="{{e.key}}"> </td>
+   {% else %}
+     <td width=65>{{ e.owner }} </td>
+   {% endif %}
+
+  <td width=70>{{e.courts}}</td>
+
+  <td width=120>{{e.start}} - {{e.end}} </td>
+  <td width=150>{{e.desc}} </input> </td>
+ </tr>
+{% endfor %}
+</table>
+
+<input type="submit" value="Reserve a Court!" />
+</form>
+
+
+<!--
+<center>
+
+<form name="reserve" action="{{Site}}" method="POST">
+{% for e in  Courtlist %}
+
+ <input type="radio" name="courts" value="{{e.key}}"> {{e.start}} - {{e.end}} <br>
+  </input>
+{% endfor %}
+<input type="submit" value="Reserve a Court!" />
+</form>
+
+</center>
+
+-->

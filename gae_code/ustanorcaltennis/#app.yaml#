@@ -1,0 +1,151 @@
+# app.yaml 
+# dev_appserver.py cupertinousta
+# appcfg.py update cupertinousta
+
+application: ustanorcaltennis
+version: 1 
+runtime: python 
+api_version: 1
+
+env_variables:
+   HOMECOURTS: 'Cuesta'
+
+
+handlers:
+
+#- url : /favicon.ico
+#  static_files: static/images/favicon.ico
+#  upload: static/images/favicon.ico
+
+- url: /*.
+  script: main.py
+
+- url: /assets
+  static_dir: assets
+
+- url: /month/([\d]*)/([\d]*)
+  script: month.py
+
+- url: /courts/([\d]*)/([\d]*)/([\d]*)
+  script: courts.py
+
+- url: /reserve
+  script: courts.py
+
+# List all court resevations
+- url: /summary
+  script: summary.py
+
+# by date
+- url: /bydate
+  script: summary.py
+
+
+# Edit Captain court resevations (only captain sees)
+- url: /captain
+  script: captain.py
+
+- url: /unreserve
+  script: captain.py
+
+# Captain can change password
+- url: /pwchange
+  script: captain.py
+
+
+- url: /login
+  script: logger.py
+
+- url: /logout
+  script: logger.py
+
+# to testcases ----------
+- url: /all
+  script: testcases.py
+
+# fill some of the reservation dates 
+- url: /partial
+  script: testcases.py
+
+
+# to test new code ----------
+
+- url: /test
+  script: test.py
+
+
+# Instructions
+
+- url: /instruct[\w]*
+  script: instructions.py
+
+
+# Not used anymore -----------
+- url: /query
+  script: ustacal.py
+
+
+# Admin -----------
+
+- url: /admin
+  script: admin.py  
+
+- url: /doschedule
+  script: admin.py  
+
+
+# change date that reservations start
+- url: /doopen
+  script: admin.py  
+
+# edit the captain password/count values
+- url: /doeditcapt
+  script: admin.py  
+
+- url: /doaddcapt
+  script: admin.py  
+
+# ADMIN  Delete using the Month UI
+- url: /delmonth/([\d]*)/([\d]*)
+  script: delmonth.py  
+
+- url: /dodelmonth
+  script: delmonth.py  
+
+- url: /_courts/([\d]*)/([\d]*)/([\d]*)
+  script: delmonth.py
+
+# ADMIN create captain/courts, delete captain/courts
+
+- url: /create
+  script: create.py
+
+- url: /dodelete
+  script: create.py
+
+- url: /doccapt
+  script: create.py
+
+- url: /doccourts
+  script: create.py
+
+- url: /done
+  script: month.py
+
+- url: /member
+  script: month.py
+
+- url: /cstyle
+  script: cstyle.py
+
+- url: /table
+  script: table.py
+
+
+
+
+
+
+
+
+

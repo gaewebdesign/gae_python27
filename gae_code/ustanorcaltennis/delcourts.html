@@ -1,0 +1,61 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("assets/css/table.css");')
+@import url("assets/css/library.css");')
+-->
+
+</style>
+<body bgcolor="d2d2ff">
+<title>Courts</title>
+
+<div id=purple_block>
+ {{ LoginForm }} 
+</div>
+
+
+<center>
+<h1>Courts for {{month}}/{{day}}/{{year}} </h1>
+<p>
+
+</center>
+
+<center>
+<table width=500>
+<thead>
+<tr><th scope="col">Courts</th>
+<th scope="col">Loc</th> 
+<th scope="col" align="center">Time</th><th scope="col" align="left">Description
+</tr>
+</thead>
+
+{% for e in  Courtlist %}
+ <tr>
+
+  <td width=70>{{e.courts}}</td>
+  <td width=70>{{e.location}} </td>
+  <td width=120>{{e.start}} - {{e.end}} </td>
+  <td width=150>{{e.desc}} </input> </td>
+ </tr>
+{% endfor %}
+</table>
+
+
+<!--
+<center>
+
+<form name="reserve" action="{{Site}}" method="POST">
+{% for e in  Courtlist %}
+
+ <input type="radio" name="courts" value="{{e.key}}"> {{e.start}} - {{e.end}} <br>
+  </input>
+{% endfor %}
+<input type="submit" value="Reserve a Court!" />
+</form>
+
+</center>
+
+-->

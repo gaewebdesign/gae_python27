@@ -1,0 +1,130 @@
+# app.yaml 
+# dev_appserver.py cupertinousta
+# appcfg.py update cupertinousta
+
+# http//localhost:8080
+# run these one directory higher
+# ~/Downloads/google_appengine/dev_appserver.py cupertinousta
+# ~/Downloads/google_appengine/appcfg.py update cupertinousta
+
+#application: nutzfortennis
+application: ghackapp
+version: 2
+runtime: python27 
+api_version: 1
+threadsafe: true
+
+builtins:
+- deferred: on
+- appstats: on
+
+handlers:
+
+- url: /test
+  script: test.app
+
+- url: /assets
+  static_dir: assets
+
+- url: /
+  script: main.app
+
+- url: /main
+  script: main.app
+
+- url: /newplayer
+  script: main.app
+
+- url: /newplayerteams
+  script: main.app
+
+- url: /login
+  script: logger.app
+
+- url: /logout
+  script: logger.app
+
+- url: /admin
+  script: admin.app
+
+
+# Gets schedule,players of a team
+- url: /roster
+  script: schedule.app
+
+# Gets all the teams players are on for a Roster
+- url: /rosterteams
+  script: schedule.app
+
+# Create all the teams for playerid
+- url: /createplayerteams
+  script: schedule.app
+
+# Create Player for  playerid (gets the team IDs)
+- url: /createplayer
+  script: schedule.app
+
+
+# scrap_teamIDs(playerid) returns IDs for playerid
+- url: /scrap_teamids
+  script: schedule.app
+
+# scrap_teamdates(teamid) returns dates for teamid
+- url: /scrap_teamdates
+  script: schedule.app
+
+
+# Return player returns
+- url: /playerinfo
+  script: schedule.app
+
+# Per a team, get players and their teams ids (cron)
+- url: /teamplayerinfo
+  script: schedule.app
+
+
+- url: /test
+  script: test.app
+
+
+# ignore below here
+- url: /scrap_playerteams
+  script: schedule.app
+
+- url: /updateplayer
+  script: schedule.app
+
+# find the teams of each player
+- url: /findlayerteams
+  script: schedule.app
+
+- url: /teamdates
+  script: schedule.app
+
+- url: /home
+  script: schedule.app
+
+# Display team schedule
+- url: /team
+  script: teamrender.app
+
+# Display player schedule
+- url: /month/([\d]*)/([\d]*)
+  script: month.app
+
+
+- url: /test
+  script: test.app
+
+
+
+
+libraries:
+- name: django
+  version: latest
+
+
+
+
+
+

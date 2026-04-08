@@ -1,0 +1,158 @@
+<html>
+
+<style type="text/css">
+
+#spacing{
+  float: left;
+  width: 100%;
+  height: 2.5em;
+
+}
+
+#break{
+  float: left;
+  width: 100%;
+  height: 35px;
+  background-color:#0000ff;
+  background-color:#ffffff;
+  page-break-after: always;
+//  border-style: solid;
+//  border-top: 3px;
+//  border-top-width: 100%;
+//  border-top-color: d2d2ff;
+
+}
+
+
+.container
+{
+  float: right;
+  left: 150px;
+  border:2px solid;
+  border-radius:25px;
+  background-color:#d2d2ff;
+  width: 26em;
+  width: 19.5em;
+  height: 11.55em;
+  background-image: url(/assets/images/{{image}});
+}
+
+.lshift { float: left; margin-left: 2%;}
+.rshift { float: right; margin-right: 2%;}
+
+#logo{
+    float: left;
+//    width: 150px;
+//    height: 150px;
+
+}
+
+#year{
+  float: left;
+  width: 60%;
+  font-family: verdana,sans-serif; 
+  font-size:3.5em;
+
+}
+
+.Name{
+  font-family: "Comic Sans MS", "Brush Script MT", cursive;
+  font-size:1.875em;
+  left: 75px;
+  top: 350px;
+  height: 3em;
+  width: 100%;
+  margin-left: 2em;
+}
+
+.Long{
+  font-size:1.45em;
+}
+
+#Memb{
+     font-family: verdana,sans-serif;
+     font-size:1.3em;
+}
+
+#Middle{
+  height: 50%;
+  width: 100%;
+}
+
+#Middle_Return{
+  position: float;
+  left: 10%;
+  font-family: verdana,sans-serif; 
+  font-size:1em;
+  width: 90%;
+  margin-left: 10%;
+  margin-top: 10%;
+}
+
+#Middle_Address{
+  position: float;
+  font-family: verdana,sans-serif; 
+  font-size:1em;
+  bottom: 25px;
+  height: 80%;
+  margin-bottom: 20%;
+}
+
+
+
+
+</style>
+<!--<body bgcolor="#d2d2ff"> -->
+<body>
+
+<center><h2> Membership Cards</h2></center>
+
+
+{% for e in Cards %}
+
+<p>
+
+ {% if e.left %}
+ <div style='background-image: url(/assets/images/club/{{e.image}})' class="container lshift" >
+ {% else %}
+ <div style='background-image: url(/assets/images/club/{{e.image}})' class="container rshift" >
+ {% endif %}
+
+<!--     <div id=logo>     <image src="/assets/images/logo.png">      </div> -->
+     <div id=logo>     <image src="/assets/images/club/bass8a.gif">      </div>
+
+     <div id=year>     {{e.year}}     </div>
+     <div id=Memb>  Membership Card </div>
+     <p><br> 
+     {% if e.long %}
+         <div class="Name Long"> {{e.fname}} {{e.lname}} </div>
+     {% else %}
+         <div class="Name"> {{e.fname}} {{e.lname}} </div>
+     {% endif %}
+
+</div>
+
+ {% if e.right %}  
+  <div id=spacing> </div>
+ {% endif %}
+
+
+ {% if e.page %}   
+   <br>
+   <div id=Break></div>
+   <br>
+ {% endif %}
+
+
+{% endfor %}
+
+
+
+</center>
+
+<!--   <span style="position:float; left:10%;"> 
+       <span style="position:absolute; left:35%;"> 
+-->
+
+
+</html>

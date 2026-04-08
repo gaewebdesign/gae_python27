@@ -1,0 +1,139 @@
+# app.yaml 
+# dev_appserver.py gaewebdesign
+# appcfg.py update gaewebdesign
+
+application: gaewebdesign
+version: 1 
+runtime: python 
+api_version: 1
+
+handlers:
+
+#- url : /favicon.ico
+#  static_files: static/images/favicon.ico
+#  upload: static/images/favicon.ico
+
+- url: /schedule
+  script: main.py
+
+- url: /*.
+  script: main.py
+
+- url: /club
+  script: club.py
+
+
+- url: /assets
+  static_dir: assets
+
+- url: /month/([\d]*)/([\d]*)
+  script: month.py
+
+- url: /courts/([\d]*)/([\d]*)/([\d]*)
+  script: courts.py
+
+- url: /reserve
+  script: courts.py
+
+# List all court resevations
+- url: /summary
+  script: summary.py
+
+# by date
+- url: /bydate
+  script: summary.py
+
+
+# Edit Captain court resevations (only captain sees)
+- url: /captain
+  script: captain.py
+
+- url: /unreserve
+  script: captain.py
+
+
+- url: /login
+  script: logger.py
+
+- url: /logout
+  script: logger.py
+
+# to testcases ----------
+- url: /all
+  script: testcases.py
+
+- url: /partial
+  script: testcases.py
+
+
+# to test new code ----------
+
+- url: /test
+  script: test.py
+
+# Instructions
+
+- url: /instruct[\w]*
+  script: instructions.py
+
+
+# Not used anymore -----------
+- url: /query
+  script: ustacal.py
+
+
+# Admin -----------
+
+- url: /admin
+  script: admin.py  
+
+- url: /doschedule
+  script: admin.py  
+
+# change date that reservations start
+- url: /doopen
+  script: admin.py  
+
+# edit the captain password/count values
+- url: /doeditcapt
+  script: admin.py  
+
+- url: /doaddcapt
+  script: admin.py  
+
+- url: /delete
+  script: admin.py
+
+# set captain.count to zero, and remove captains from courttime.owner
+- url: /clear
+  script: admin.py
+
+
+# Create captains user/password
+- url: /ccapt
+  script: admin.py
+
+# List captains user/password
+- url: /capt
+  script: admin.py
+
+- url: /done
+  script: month.py
+
+- url: /member
+  script: month.py
+
+- url: /cstyle
+  script: cstyle.py
+
+- url: /table
+  script: table.py
+
+
+
+
+
+
+
+
+

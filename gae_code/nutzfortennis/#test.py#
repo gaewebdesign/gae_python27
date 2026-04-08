@@ -1,0 +1,414 @@
+import os
+from google.appengine.ext.webapp import template
+
+import webapp2
+
+#from google.appengine.ext import webapp
+#from google.appengine.ext.webapp.util import run_wsgi_app
+
+from google.appengine.ext import db
+
+import urllib
+from google.appengine.api import urlfetch
+
+import json
+from django.utils import simplejson
+
+import re,sys,string,datetime,sets,calendar
+
+import datetime,random
+from datetime import timedelta
+
+import datastore
+import library
+
+from google.appengine.ext import ndb
+
+class Player( ndb.Model):
+     usta = ndb.StringProperty()
+     name = ndb.StringProperty()
+
+class Team( ndb.Model):
+     teamid = ndb.StringProperty()
+
+
+class Match( ndb.Model):
+     date = ndb.DateTimeProperty()
+     desc = ndb.StringProperty()
+
+class IDList( ndb.Model ):
+     id = ndb.StringProperty()
+     desc = ndb.StringProperty()
+
+
+
+class OurTeam( ndb.Model):
+
+     teamid = ndb.StringProperty()
+     name  = ndb.StringProperty()
+     alias = ndb.StringProperty()
+     color = ndb.StringProperty()
+
+     completed = ndb.StructuredProperty( Match , repeated=True)
+     active = ndb.StructuredProperty( Match , repeated=True)
+
+     players = ndb.StructuredProperty( IDList, repeated =True)
+     teams = ndb.StructuredProperty(IDList, repeated=True)
+
+
+
+class Day:
+    year=2013    
+    month=1    
+    day=1    
+    classtype=""
+    holiday = ""
+    courts = ""
+
+
+def FindMatches( y , m , d):
+
+        playerid = 20832    #CBell
+        playerid = 94120    #Jay
+        playerid = 58252    #CJ
+
+# Get the teamids of Player
+        g = datastore.Player.get_by_key_name( str(playerid) )
+        teams = g.teams
+        ustamatches=[]
+
+
+# Get active matches for each team
+        for teamid in teams:
+           g = datastore.Team.get_by_key_name( str(teamid) )
+           active = g.active
+           for _time in active:
+              tlist = [ _time , teamid ]
+              ustamatches.append( tlist)
+
+        ustamatches.sort()
+    
+        theDate = datetime.date(y,m,d)
+
+# Get just the matches for today
+        today = [ d for d in ustamatches if d[0] == theDate ]
+
+        r = []
+        for t in today:
+           c = Courts()
+           c.teamid = t[1]    # format is [ Datetime, teamid ]
+           r.append( c )
+
+        
+        return  r
+
+
+def Writeln(selfobj,*t):
+        for x in t:
+          selfobj.response.out.write(x )
+          selfobj.response.out.write(" ")
+
+        selfobj.response.out.write("<br>")
+
+def Write(selfobj,*t):
+        for x in t:
+          selfobj.response.out.write(x )
+          selfobj.response.out.write(" ")
+
+class MatchDates():
+   id = db.StringProperty()
+   dates = db.ListProperty(datetime.date)   
+
+class Hopkins(db.Model):
+   name = db.StringProperty()
+#  matches = JsonProperty()
+ 
+
+
+
+class Test(webapp2.RequestHandler):
+
+    def get(self):
+
+#      self.test1()
+#      self.test2()
+       playerid=100472  #roger
+       playerid=11507  #greta
+       playerid=94120  #jay
+
+       teamid= 52121  # 3/2
+       teamid= 54054  # Hopkins
+       teamid= 51713  # Su
+       teamid = 52908 # Refugio
+       teamid = 52567 # GGP4.0
+       teamid = 52739 # Sabrina
+
+
+       teamid = 53952  # GGP3.5 (Akash)
+       teamid = 54103  # SCTC W55
+       teamid = 53486  # GGP Mx8.0
+       teamid = 53886  # SM Mx8.0
+       teamid = 54293  # Oly Mx8.0
+       teamid = 53639  # STC 55W
+       teamid = 53683  # 
+       teamid = 53878  # go green
+       teamid = 54054  # Hopkins
+
+       teamid= 52237  # Union City 4.0
+
+       teamid= 54834  # Refugio
+       teamid = 53124  # SCTC W4.0
+       teamid = 53996  # SCTC Mx8.0
+       teamid = 53700  # SRosa
+
+       teamid = 54642
+       Writeln(self,"Test")
+       self.test10( teamid)
+
+
+
+    def test10(self,teamid):
+
+      url  = "http://www.ustanorcal.com/teaminfo.asp?id="+str(teamid)
+      result = urlfetch.fetch(url)
+      scraped = result.content
+      Writeln(self,"test10")
+
+      pattern = r"nowrap><a href=playermatches\.asp\?id=([\d]*)>([ \-\w\d\'\.]*)[, ]*([ \-\w\d\'\.]*)[ <>\w=#\d\/]*?nowrap>([ \w]*)"
+
+      pattern = r"<a href=playermatches\.asp\?id=([\d]*)>([^.]*?)[,]([^.]*?)</a></td><td"
+
+      r = re.compile(pattern,re.IGNORECASE )
+      match = r.findall( scraped )
+      Writeln(self, "PLAYERS ")
+      for i, tuple in enumerate(match):      #returns i(ndex) and a 3-Tuple
+         Writeln(self, i, tuple)
+
+    def test7(self):
+       now = datetime.datetime(year=2013,month=7,day=1)
+
+       then = datetime.datetime(year=2013,month=7,day=1,hour=12)
+
+       Writeln(self,now)
+       Writeln(self,then)
+
+       t = now.date()
+       Writeln(self,"")
+
+       if( now.date() == then.date()) :
+           Writeln(self,now ," = ", then)
+
+    def test6(self):
+
+       teamid= 54054
+       teamKey = ndb.Key(OurTeam, str(teamid) )
+       o = OurTeam( key=teamKey)
+       o.name= "Ms Hopkins"
+       o.teamid = "50254"
+
+       mlist=[]
+
+       month = 7
+       day = 23
+
+
+       now = datetime.datetime.now()
+       now = datetime.datetime(year=2013,month=7,day=1)
+
+       for i in range(1,10):
+         Writeln(self,i)
+         m = Match( )
+
+
+         m.date = now #datetime.datetime(2013,mon,day,0,0,0)
+         m.desc = "All 3 at 6:00 pm"
+         m.active = "Y"
+         mlist.append(m)       
+        
+         delta = timedelta(days=random.randrange(4,7) ,hours=random.randrange(0,8) )
+         now = now + delta
+
+       o.matches = mlist
+
+       o.put()
+
+       g = OurTeam.get_by_id( str(teamid) )
+       for m in o.matches:
+          Writeln( self , m.date , " , ",m.active," ", m.desc)
+
+
+       Writeln( self  ,"Team done = ")
+
+
+    def test5(self,teamid): 
+
+      url  = "http://www.ustanorcal.com/teaminfo.asp?id="+str(teamid)
+      result = urlfetch.fetch(url)
+      scraped = result.content
+
+#      scraped = s.strip('\r\n')
+
+
+      rexp = r"nbsp;([\d]{2})\/([\d]{2})\/([\d]{2})"
+      r = re.compile(rexp,re.IGNORECASE )
+      match = r.findall( scraped )
+
+      Writeln(self, "ACTIVE MATCHES" )
+      for i,d in enumerate(match):      #returns i(ndex) and a 3-Tuple
+           month = int(d[0])
+           day   = int(d[1])
+           year  = int(d[2]) + 2000
+#          active.append( datetime.date(year,month,day) )
+           Writeln( self, month, day,year )
+
+      rexp = r"bgcolor=white>([Mon|Tue|Wed|Thu|Fri|Sat|Sun]{3})<"
+      r = re.compile(rexp,re.IGNORECASE )
+      match = r.findall( scraped )
+      for i,d in enumerate(match):      #returns i(ndex) and a 3-Tuple
+           Writeln( self, d )
+
+
+
+      rexp = r"<\/td><td>[ All\d\w&]*;([\d]{1,2}:[\d]{1,2}[ ][AM|PM]{2})"
+
+      rexp = r"([\d]{1,2}:[\d]{1,2}[ ][AM|PM]{2})"
+
+#     matches at front of line
+      rexp = r"^([ \/&\d\w;]*)([\d]{1,2}:[\d]{1,2}[ ][AM|PM]{2})"
+
+#     matches across \n
+      rexp = r">[\s]*([ \/&\d\w;]*)([\d]{1,2}:[\d]{1,2}[ ][AM|PM]{2})"
+
+#     days
+      rexp = r"([Sun|Mon|Tue|Wed|Thu|Fri|Sat]{3})</td><td>[\s]*([ \/&\d\w;]*)([\d]{1,2}:[\d]{1,2}[ ][AM|PM]{2})"
+
+
+      rexp_active = r"nbsp;[\d]{2})\/([\d]{2})\/([\d]{2}"
+      rexp_active = r"[\d]{2})\/([\d]{2})\/([\d]{2}"
+
+      rexp_done = r"[\d]{2})\/([\d]{2})\/([\d]{2}<\/a>"
+
+
+      rexp = r"</td><td( align=center bgcolor=[#\d\w]*)>([Sun|Mon|Tue|Wed|Thu|Fri|Sat]{3})</td><td>[\s]*([ \/&\d\w;]*)([\d]{1,2}:[\d]{1,2}[ ][AM|PM]{2})"
+
+      rexp = r"(" + rexp_done + r")|nbsp;(" +  rexp_active + r")"
+
+      r = re.compile(rexp,re.IGNORECASE)
+      match = r.findall( scraped )
+      for i,d in enumerate(match):      #returns i(ndex) and a 3-Tuple
+           Writeln( self, i, d  )
+#          Writeln( self, i, d ,d[0],str(d[1])+str(d[2]) )
+
+
+
+# Get Player's teams and get their active dates
+    def test4(self,playerid):
+        g = datastore.Player.get_by_key_name( str(playerid) )
+        teams = g.teams
+
+        Writeln(self, "FOR PLAYER ID",playerid)
+        ustamatches=[]
+        for teamid in teams:
+           g = datastore.Team.get_by_key_name( str(teamid) )
+           active = g.active
+           for _time in active:
+              tlist = [ _time , teamid ]
+              ustamatches.append( tlist)
+
+
+        ustamatches.sort()
+        for _match in ustamatches:
+           Writeln(self, _match)
+
+    
+        theDate = datetime.date(2013,8,24)
+        today = [ d for d in ustamatches if d[0] == theDate ]
+
+        Writeln(self, "TODAYS MATCHES" )
+        Writeln( self, today )
+
+
+    def test1(self):
+
+      teamid = "53995"   #Johnson Ranch
+      teamid = "53996"   # SCTC
+      teamid = "54054"   # Hopkins
+
+      teamid = "54"   # none
+
+      team = getTeamFromDB( teamid )
+
+#     count =  len(t.players)
+
+      if( team.players != None):
+        Writeln( self, team.players )
+      else:
+        Writeln( self, "no team.players")
+
+# keep unique ones
+    def test2(self):
+      seq1 = [23,24,1,2,3,1111,24,23,3,2,1]
+      seq2 = [343,323,1111,24000,2222]
+      seq = seq1 + seq2
+      set = sets.Set(seq)
+      l = list(set)
+      f = lambda x: str(x)
+      l2= map( f,  l)
+      Writeln(self, set )
+      Writeln(self, l )
+      Writeln(self, l2 )
+
+
+#
+#      teamid = "54054"   # Hopkins
+#      team_key = db.Key.from_path("Team",teamid)
+#      team = db.get(team_key)
+#      team.rostered = l2
+#      db.put(team)
+
+    def test3( self,playerid):
+        url  = "http://www.ustanorcal.com/playermatches.asp?id="+str(playerid)
+        result = urlfetch.fetch(url)
+        scraped = result.content
+
+        pattern_league = r'>(20[\d]{2}) (Mixed|Adult|Combo)'
+        pattern_teamID = r'<a href=\"teaminfo\.asp\?id=([\d]*)">'
+
+        pattern = pattern_league + "|" + pattern_teamID
+
+        r = re.compile( pattern ,re.IGNORECASE )
+        match = r.findall( scraped )
+
+        teams=[]
+
+        year = datetime.datetime.now().year
+        Writeln( self, year )
+        year="2013"
+        for i, found in enumerate(match):      #returns i(ndex) and Tuple
+
+             stripped = [ s for s in found if len(s)>0 ]
+             Writeln(self, i, stripped )
+
+             if stripped[0] =="2012" : break
+             if stripped[0] =="2011" : break
+
+             if len(stripped[0])> 4 : 
+               teams.append( stripped[0])
+             if i > 25 : break
+
+
+        Writeln( self, teams )
+        return teams
+
+
+
+
+
+app =  webapp2.WSGIApplication(  [ ('/', Test),
+
+#                             ('/test/([\d]*)/([\d]*)', Test)
+                                   ('/test', Test),  
+
+
+                                 ],debug=True )
+

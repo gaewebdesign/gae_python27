@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/interface/templates
+END
+scheduler_form.html
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/interface/templates/scheduler_form.html
+END
+404.html
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/interface/templates/404.html
+END
+base.html
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/interface/templates/base.html
+END

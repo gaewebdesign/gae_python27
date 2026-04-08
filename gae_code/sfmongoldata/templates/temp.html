@@ -1,0 +1,103 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("/assets/css/table.css");')
+@import url("/assets/css/library.css");')
+-->
+
+.eline{
+        font-family: "Comic Sans MS", "Brush Script MT", cursive;
+        font-size:24 px;
+        background: #fefefe;
+        background-color: #ffeeff;
+        background-color: rgb(255,255,255);
+        border: none;
+        border-bottom: 1px solid black;
+        height : 45 px;
+        width: 20%;
+}
+
+
+</style>
+<script language="JavaScript" src="/assets/javascript/sorttable.js"></script>
+<script language="JavaScript" src="/assets/javascript/library.js"></script>
+
+<body>
+
+<style type = "text/css">
+#sch {
+#      position:absolute;
+       left: 200px;
+#       top: 50px;
+       border:1px solid;
+       width:500px; height:200px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;}
+
+
+#open {
+#      position:absolute;
+       left: 200px;
+#      top: 300px;
+       border:1px solid;
+       width:500px; height:90px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+#capt {
+#      position:absolute;
+       left: 200px;
+#      top: 450px;
+       border:2px solid;
+       width:500px; height:75px; 
+       background:#e8f6f9; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+
+
+<input type="hidden" name = "keyid" value = "{{ Member.unix}},{{ Model }}" >
+
+<p><p><p><p><p><p><p><p><p>
+
+<!--
+<tr><td>YEAR <td>{{YEAR}}
+<tr><td>SIGNUP <td>{{Member.date}}
+<tr><td>Model <td>{{Model}}
+<tr><td>KEY <td>{{Member.unix}}
+-->
+<tr><td>MODEL 
+<td>{{MODEL}}  
+
+<tr><td>KEY 
+<td>{{UNIX}}  
+
+<tr><td>NAME 
+<td>{{FNAME}}  {{LNAME}}
+<tr><td>NTRP <td>{{NTRP}} <br>
+<tr><td>EMAIL <td> {{EMAIL}}  <br>
+
+<!--
+<tr><td>ADDRESS <td>{{ADDRESS}} <br>
+<tr><td>CITY <td>{{CITY}}  <br>
+<tr><td>PHONE <td> {{PHONE}} <br>
+<tr><td>ZIP <td> {{ZIP}} <br>
+<tr><td>MTYPE <td> {{MTYPE}}  <br>
+<tr><td>COUNT <td> {{COUNT}}  <br>
+-->
+
+</table>
+
+
+
+</html>

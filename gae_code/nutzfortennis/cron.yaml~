@@ -1,0 +1,11 @@
+cron:
+
+- description: create player Jay
+  url: /newplayer
+  schedule: every 50 hours
+  timezone: America/Los_Angeles
+
+- description: get Jay's teams
+  url: /newplayerteams
+  schedule: every 4 hours
+  timezone: America/Los_Angeles

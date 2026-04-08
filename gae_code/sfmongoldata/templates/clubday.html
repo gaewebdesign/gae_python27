@@ -1,0 +1,111 @@
+<html>
+<head>
+</head>
+
+<style type = "text/css"> 
+<!--
+@import url("/assets/css/table.css");')
+@import url("/assets/css/library.css");')
+-->
+</style>
+<script language="JavaScript" src="/assets/javascript/sorttable.js"></script>
+<script language="JavaScript" src="/assets/javascript/library.js"></script>
+
+<body>
+
+<style type = "text/css">
+#sch {
+#      position:absolute;
+       left: 200px;
+#       top: 50px;
+       border:1px solid;
+       width:500px; height:200px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;}
+
+
+#open {
+#      position:absolute;
+       left: 200px;
+#      top: 300px;
+       border:1px solid;
+       width:500px; height:90px; 
+       background:#e8f6f9; overflow:hidden; 
+       background:#d1e8ff; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+#capt {
+#      position:absolute;
+       left: 200px;
+#      top: 450px;
+       border:2px solid;
+       width:500px; height:75px; 
+       background:#e8f6f9; overflow:hidden; 
+       padding:4px 6px 18px 12px; 
+       margin-top:5px 
+       margin-bottom:5px;
+}
+
+
+</style>
+
+<center>
+<h2>{{TITLE}}</h2>
+<table cellpadding="2">
+<th>
+
+</table>
+
+<p>
+
+<form id="_MODIFY"  action="/manage_edit" method="post">
+<input name="ModifyForm" type="submit" value=" MODIFY "> 
+
+
+<center>Click on top row to sort</center>
+<table align="center" class="sortable" width="80%">
+
+<thead>
+<tr>
+<th scope="col">Edit</th>
+<th scope="col">First Name</th>
+<th scope="col">Last Name</th>
+<th scope="col">Email</th>
+<th scope="col">NTRP</th>
+<th scope="col">Member</th>
+<th scope="col">Date</th>
+<!--<th scope="col">Eats</th> -->
+
+</thead>
+
+{% for e in ClubDayList %}
+<tr style="color:blue ; background-color:#ABCDEF">
+
+<td>
+
+<input type="radio" id="DEL" name = "MODIFY" value="{{e.unix}},CLUBDAY">
+
+</td>
+
+<td>{{e.fname}}</td>
+<td>{{e.lname}} </td>
+<td>{{e.email}} </td>
+<td>{{e.ntrp}} </td>
+<td>{{e.member}} </td>
+<td>{{e.date}} </td> 
+<!--<td>{{e.potluck}} </td>  -->
+
+</tr>
+{% endfor %}
+
+</table>
+
+</form>
+
+</html>

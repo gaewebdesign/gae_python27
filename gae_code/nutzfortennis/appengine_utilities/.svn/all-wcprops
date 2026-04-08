@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities
+END
+flash.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/flash.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/__init__.py
+END
+event.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/event.py
+END
+cache.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/cache.py
+END
+settings_default.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/settings_default.py
+END
+rotmodel.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/rotmodel.py
+END
+sessions.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/12/trunk/gae/ustanorcaltennis/appengine_utilities/sessions.py
+END

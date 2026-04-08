@@ -1,0 +1,54 @@
+from google.appengine.ext import ndb
+
+class IDList( ndb.Model ):
+     id = ndb.StringProperty()
+     desc = ndb.StringProperty()
+
+
+class MatchList( ndb.Model):
+     desc = ndb.StringProperty()
+     date = ndb.DateTimeProperty()
+
+
+#class Player(db.Model):
+#   name = db.StringProperty()
+#   teams = db.StringListProperty()
+#   dates = db.ListProperty(datetime.date)
+
+
+# Create this for a player to put into calendar
+# Players has 3 items
+# playerid  The USTA ID
+# name      player's name
+# teams     list of  teams player is on
+class Player( ndb.Model):
+#    playerid = ndb.StringProperty()
+     name = ndb.StringProperty()
+     teams = ndb.StructuredProperty(IDList, repeated=True )
+     count = ndb.IntegerProperty()
+     current = ndb.IntegerProperty()
+
+class Team( ndb.Model):
+     teamid = ndb.StringProperty()
+     desc = ndb.StringProperty()
+
+class Roster( ndb.Model):
+     teamid = ndb.StringProperty()
+     name  = ndb.StringProperty()
+     alias = ndb.StringProperty()
+     color = ndb.StringProperty()
+
+     completed = ndb.StructuredProperty( MatchList , repeated=True)
+     active = ndb.StructuredProperty( MatchList , repeated=True)
+
+# IDList is a generic (id,name) list
+     players = ndb.StructuredProperty( IDList, repeated =True)
+     teams = ndb.StructuredProperty(IDList, repeated=True)
+
+#    players = ndb.StructuredProperty(Player, repeated=True)
+#    teams = ndb.StructuredProperty(Team, repeated=True)
+
+
+
+class PTeam( Roster ):
+     pass

@@ -1,0 +1,84 @@
+import os
+from google.appengine.ext.webapp import template
+
+#from google.appengine.ext import webapp
+
+#from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.ext import db
+from google.appengine.api import urlfetch
+
+# new Python 2.7 imports
+import webapp2    # Python 2.7
+from google.appengine.ext import ndb
+
+# --------
+
+import urllib
+import re,cgi,calendar,string,types
+import datetime,time
+
+#import datastore,library
+
+import ndbstore
+
+from google.appengine.api import users
+
+
+
+
+def Writeln( selfobj, *t):
+   for x in t:
+     selfobj.response.out.write(x )
+     selfobj.response.out.write(" ")
+
+   selfobj.response.out.write("<br>")
+
+def Write( selfobj, *t):
+   for x in t:
+     selfobj.response.out.write(x )
+     selfobj.response.out.write(" ")
+
+
+
+class AdminHandler(webapp2.RequestHandler):
+
+    def Write(self,t):
+     self.response.out.write(t)
+
+    def Writeln(self,t):
+     self.response.out.write(t)
+     self.response.out.write("<br>")
+
+    def get(self):
+
+      Writeln(self,"Admin")
+
+      players = [ ("95120","Jay" ,"Pineda"),
+            ("20832","Carrie","Bell")
+          ]
+
+      for u in players:
+
+         playerid = u[0]
+         fname = u[1]
+         lname = u[2]
+
+         playerKey = ndb.Key(ndbstore.User, str(playerid) )     
+         g = ndbstore.User( key=playerKey)
+         g.id = playerid
+         g.fname = fname 
+         g.lname = lname
+         g.put()
+
+         Writeln(self, "create", playerid ," - ",fname,"  ",lname)
+
+
+app = webapp2.WSGIApplication(
+                                     [('/admin', AdminHandler )
+
+                                     ],
+
+
+                                     debug=True)
+
+

@@ -1,0 +1,20 @@
+import re
+
+
+s = " super duper \n"
+s = s + " super duper \n"
+
+print s
+
+
+combine = r'(super)'
+r = re.compile(combine ,re.IGNORECASE )
+
+scraped = s
+match = r.findall( scraped )
+
+print match
+
+for i, tuple in enumerate(match):      #returns i(ndex) and a 3-Tuple  
+   print tuple,type(tuple)
+   if( 'e' in tuple ) : print ("yes")
